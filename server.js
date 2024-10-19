@@ -4,7 +4,7 @@ const cors = require('cors');
 const { Configuration, OpenAIApi } = require("openai");
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: 'https://twal89.github.io' }));
 app.use(express.json());
 
 const configuration = new Configuration({
@@ -30,7 +30,7 @@ app.post('/api/explain', async (req, res) => {
     res.json({ explanation: completion.data.choices[0].text });
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'Une erreur est survenue lors de la génération de la réponse.' });
+    res.status(500).json({ error: error.message || 'Une erreur est survenue lors de la génération de la réponse.' });
   }
 });
 
