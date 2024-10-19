@@ -12,6 +12,10 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
+app.get('/', (req, res) => {
+  res.send('BrainBridge API is running');
+});
+
 app.post('/api/explain', async (req, res) => {
   try {
     const { name, age, question } = req.body;
