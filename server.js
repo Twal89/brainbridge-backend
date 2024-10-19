@@ -27,11 +27,11 @@ app.get('/', (req, res) => {
       console.log('Prompt généré:', prompt);
       
       console.log('Tentative d\'appel à OpenAI...');
-      const completion = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: prompt,
-        max_tokens: 500
-      });
+    const completion = await openai.createCompletion({
+      model: "gpt-3.5-turbo-instruct",  // Utilisez un modèle plus récent
+      prompt: prompt,
+      max_tokens: 500
+    });
       console.log('Réponse d\'OpenAI reçue:', completion.data);
       
       res.json({ explanation: completion.data.choices[0].text });
