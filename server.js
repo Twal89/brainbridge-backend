@@ -4,7 +4,13 @@ const cors = require('cors');
 const OpenAI = require("openai");
 const app = express();
 
-app.use(cors({ origin: 'https://twal89.github.io' }));
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
+
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 const openai = new OpenAI({
