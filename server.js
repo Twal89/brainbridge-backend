@@ -10,8 +10,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors({ origin: '*' }));
-app.use(express.json());
+app.use(cors({
+  origin: ['https://twal89.github.io', 'http://localhost:3000'],
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
