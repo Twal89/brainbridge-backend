@@ -19,14 +19,21 @@ app.get('/', (req, res) => {
 app.post('/api/explain', async (req, res) => {
   try {
     const { name, age, question } = req.body;
-    const prompt = `Explique à ${name}, qui a ${age} ans, le concept suivant : ${question}`;
+    
+    // Ajout du log pour voir les requêtes entrantes
+    console.log('Requête reçue:', { name, age, question });
+    
+    // Vérification des champs requis
+    if (!name || !age || !question) {
+      return res.status(400).json({ error: 'Tous les champs sont requis.' });
+    }
 
+    const prompt = `Explique à ${name}, qui a ${age} ans, le concept suivant : ${question}`;
     const completion = await openai.createCompletion({
       model: "text-davinci-003",
       prompt: prompt,
       max_tokens: 500
     });
-
     res.json({ explanation: completion.data.choices[0].text });
   } catch (error) {
     console.error('Error:', error);
