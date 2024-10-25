@@ -9,6 +9,15 @@ app.use(cors({
   allowedHeaders: ['Content-Type']
 }));
 
+app.use(express.json());
+
+// Middleware pour logger toutes les requêtes
+app.use((req, res, next) => {
+  console.log('Request received:', req.method, req.url);
+  console.log('Request headers:', req.headers);
+  next();
+});
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
@@ -19,9 +28,15 @@ app.get('/', (req, res) => {
 
 app.post('/api/explain', async (req, res) => {
   try {
+    console.log('Requête reçue sur /api/explain');
+    console.log('Body:', req.body);
+    
     const { name, age, question } = req.body;
-    console.log('Requête reçue:', { name, age, question });
+    if (!name || !age || !question) {
+      return res.status(400).json({ error: 'Il manque des informations requises' });
+    }
 
+    console.log('Appel à OpenAI...');
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [{
@@ -29,11 +44,15 @@ app.post('/api/explain', async (req, res) => {
         content: `Explique à ${name}, qui a ${age} ans, le concept suivant : ${question}`
       }]
     });
+    console.log('Réponse reçue d\'OpenAI');
 
     res.json({ explanation: completion.choices[0].message.content });
   } catch (error) {
-    console.error('Erreur:', error);
-    res.status(500).json({ error: error.message });
+    console.error('Erreur détaillée:', error);
+    res.status(500).json({ 
+      error: error.message,
+      stack: error.stack
+    });
   }
 });
 
