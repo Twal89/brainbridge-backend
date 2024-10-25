@@ -3,8 +3,11 @@ const cors = require('cors');
 const OpenAI = require('openai');
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: ['https://twal89.github.io', 'http://localhost:3000'],
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
