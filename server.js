@@ -28,29 +28,22 @@ app.get('/', (req, res) => {
 
 app.post('/api/explain', async (req, res) => {
   try {
-    console.log('Requête reçue sur /api/explain');
-    console.log('Body:', req.body);
+    console.log('Clé API utilisée:', process.env.OPENAI_API_KEY.substring(0, 8) + '...');
+    console.log('Requête reçue:', { name, age, question });
     
-    const { name, age, question } = req.body;
-    if (!name || !age || !question) {
-      return res.status(400).json({ error: 'Il manque des informations requises' });
-    }
-
-    console.log('Appel à OpenAI...');
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [{
-        role: "user",
-        content: `Explique à ${name}, qui a ${age} ans, le concept suivant : ${question}`
-      }]
+    const completion = await openai.completions.create({
+      model: "gpt-3.5-turbo-instruct",
+      prompt: `Explique à ${name}, qui a ${age} ans, le concept suivant : ${question}`,
+      max_tokens: 150
     });
-    console.log('Réponse reçue d\'OpenAI');
 
-    res.json({ explanation: completion.choices[0].message.content });
+    console.log('Réponse OpenAI:', completion);
+    res.json({ explanation: completion.choices[0].text });
   } catch (error) {
-    console.error('Erreur détaillée:', error);
+    console.error('Erreur complète:', error);
     res.status(500).json({ 
-      error: error.message,
+      error: error.message, 
+      type: error.constructor.name,
       stack: error.stack
     });
   }
